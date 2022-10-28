@@ -36,9 +36,11 @@ class RowSplitter:
         # print(self.artists.to_dict())
         client_id = str(row.Index)
         tracks = [Track(int(track_id), self.artists[int(track_id)]) for track_id in row.list.split(' ')]
+        track_target = tracks[-1]
+        tracks = tracks[:-1]
         
         shard_idx = md5_hash(client_id) % self.n_shards
-        data = {"client_id": client_id, "tracks": list(map(lambda track: track.as_dict(), tracks))}
+        data = {"client_id": client_id, "tracks": list(map(lambda track: track.as_dict(), tracks)), "target": track_target.as_dict()}
         self.outs[shard_idx].write(json.dumps(data) + "\n")
 
 
